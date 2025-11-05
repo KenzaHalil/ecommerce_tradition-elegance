@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Catalogue - Tradition & Élégance{% endblock %}
+{% block content %}
+<h1 class="fw-bold mb-4" style="color:#8B1C2E; font-family:'Playfair Display',serif;">Catalogue</h1>
+
+{% for cat, info in categories.items() %}
+    {% if grouped[cat] %}
+    <div class="mb-5">
+        <h2 class="fw-bold" style="color:#E8C872; font-family:'Playfair Display',serif;">{{ info.title }}</h2>
+        <p class="mb-4" style="color:#8B1C2E;">{{ info.desc }}</p>
+        <div class="row">
+            {% for p in grouped[cat] %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <img src="{{ url_for('static', filename='images/' ~ p.id ~ '.jpg') }}" class="card-img-top" alt="{{ p.name }}">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold" style="font-family:'Playfair Display',serif;">{{ p.name }}</h5>
+                        <p class="card-text">{{ p.description }}</p>
+                        <p class="card-text"><strong>{{ "%.2f"|format(p.price_cents/100) }} €</strong></p>
+                        {% if p.stock_qty > 0 %}
+                            <form onsubmit="event.preventDefault(); addToCart('{{ p.id }}');">
+                                <button type="submit" class="btn btn-elegance fw-bold mt-auto">Ajouter au panier</button>
+                            </form>
+                        {% else %}
+                            <button class="btn btn-secondary mt-auto" disabled>Indisponible</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+{% endblock %}
+
+<script>
+function showAddToCartMessage() {
+    let oldMsg = document.getElementById("add-to-cart-popup");
+    if (oldMsg) oldMsg.remove();
+    let msg = document.createElement('div');
+    msg.id = "add-to-cart-popup";
+    msg.innerHTML = `
+        <div style="
+            position:fixed;
+            top:30px;
+            right:30px;
+            z-index:9999;
+            background:linear-gradient(90deg,#FADADD 70%,#E8C872 100%);
+            color:#8B1C2E;
+            padding:1.2rem 2.2rem;
+            border-radius:28px;
+            box-shadow:0 4px 24px #E8C872;
+            font-weight:bold;
+            font-size:1.15rem;
+            display:flex;
+            align-items:center;
+            gap:0.7rem;
+            border:2px solid #E8C872;
+        ">
+            <span style="font-size:1.5rem;">💖</span>
+            <span>Produit ajouté avec succès !</span>
+        </div>
+    `;
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 2000);
+}
+
+function addToCart(productId) {
+    fetch(`/cart/add/${productId}`, {method: "POST"})
+        .then(response => {
+            if (response.ok) {
+                showAddToCartMessage();
+            } else {
+                window.location.reload();
+            }
+        })
+        .catch(() => window.location.reload());
+}
+</script>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container mt-3">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

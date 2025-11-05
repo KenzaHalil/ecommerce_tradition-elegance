@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MiniShop</title>
+</head>
+<body>
+    <h1>Catalogue produits</h1>
+    <ul>
+        {% for p in products %}
+        <li>{{ p.name }} - {{ p.price_cents / 100 }} €</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

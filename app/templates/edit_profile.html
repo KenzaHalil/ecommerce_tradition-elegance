@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Modifier le profil - Tradition & Élégance{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Modifier le profil</h1>
+
+  <form method="post" enctype="multipart/form-data" class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Prénom</label>
+      <input name="first_name" class="form-control" value="{{ user.first_name or '' }}">
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Nom</label>
+      <input name="last_name" class="form-control" value="{{ user.last_name or '' }}">
+    </div>
+
+    <div class="col-12">
+      <label class="form-label">Photo de profil</label>
+      <input type="file" name="profile_image" accept="image/*" class="form-control">
+      {% if user.profile_image %}
+        <small class="text-muted">Image actuelle : {{ user.profile_image }}</small>
+      {% endif %}
+    </div>
+
+    <div class="col-12">
+      <button class="btn btn-primary" type="submit">Enregistrer</button>
+      <a class="btn btn-link" href="{{ url_for('profile.view_profile') }}">Annuler</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

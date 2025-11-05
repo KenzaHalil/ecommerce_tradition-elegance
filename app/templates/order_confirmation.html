@@ -1,0 +1,12 @@
+<p>Numéro de commande :
+  <strong>
+    {% if order.order_number is defined %}
+      {{ order.order_number }}
+    {% elif order.get('order_number') %}
+      {{ order.get('order_number') }}
+    {% else %}
+      {{ order.id if order.id is defined else order.get('id') }}
+    {% endif %}
+  </strong>
+</p>
+<p>Montant : {{ '%.2f'|format(((order.total_cents if order.total_cents is defined else order.get('total_cents',0))/100.0)) }} €</p>

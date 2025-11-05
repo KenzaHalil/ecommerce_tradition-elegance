@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h1>Modifier le profil</h1>
+  <form method="post" enctype="multipart/form-data">
+    <div class="mb-2">
+      <label class="form-label">Prénom</label>
+      <input name="first_name" value="{{ user.first_name }}" class="form-control">
+    </div>
+    <div class="mb-2">
+      <label class="form-label">Nom</label>
+      <input name="last_name" value="{{ user.last_name }}" class="form-control">
+    </div>
+    <div class="mb-2">
+      <label class="form-label">Adresse</label>
+      <input name="address" value="{{ user.address or '' }}" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Photo de profil (png/jpg/jpeg/gif)</label>
+      <input type="file" name="profile_image" class="form-control">
+    </div>
+    <button class="btn btn-success" type="submit">Enregistrer</button>
+    <a href="{{ url_for('profile.view_profile') }}" class="btn btn-link">Annuler</a>
+  </form>
+</div>
+{% endblock %}

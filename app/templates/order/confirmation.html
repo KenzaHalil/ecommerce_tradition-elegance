@@ -1,0 +1,46 @@
+{% extends "base.html" %} {% block title %}Confirmation de commande{% endblock %} {% block content %}
+<div class="container mt-4">
+    <h1>Merci pour votre commande</h1>
+    <p>Numéro de commande : <strong>{{ order.id }}</strong></p>
+    <p>Montant : <strong>{{ '%.2f'|format(order.total_cents/100) }} €</strong></p>
+
+    {% set tn = tracking_number or (order.delivery.tracking_number if order.delivery else None) %} {% if tn %}
+    <div class="p-3 mt-4 rounded" style="max-width:720px;background:linear-gradient(90deg,#FFF7F6,#FFF0E6);box-shadow:0 6px 20px rgba(0,0,0,0.06);">
+        <div style="display:flex;gap:1rem;align-items:center;">
+            <div style="font-size:2rem;">🎉</div>
+            <div style="flex:1;">
+                <div style="font-weight:700;color:#8B1C2E;font-size:1.1rem">Paiement reçu — merci !</div>
+                <div style="margin-top:6px;">Votre colis est en cours de préparation. Voici votre numéro de suivi :</div>
+                <div style="margin-top:10px;display:flex;gap:0.5rem;align-items:center;">
+                    <div id="tn-text" style="background:#fff;padding:0.45rem 0.8rem;border-radius:8px;font-weight:700;border:1px dashed rgba(0,0,0,0.06)">{{ tn }}</div>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="copyTracking()">Copier</button>
+                    <a class="btn btn-sm btn-primary" href="{{ url_for('delivery_bp.track') }}?tracking_number={{ tn }}" style="margin-left:auto;">Suivre ma livraison</a>
+                </div>
+                <div id="copy-msg" style="margin-top:6px;color:green;display:none;font-size:0.9rem;">Numéro copié ! ❤️</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyTracking() {
+            const tn = document.getElementById('tn-text').innerText.trim();
+            if (!tn) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(tn).then(() => {
+                    const m = document.getElementById('copy-msg');
+                    if (m) {
+                        m.style.display = 'block';
+                        setTimeout(() => m.style.display = 'none', 2000);
+                    }
+                }).catch(() => alert('Copier manuellement : ' + tn));
+            } else {
+                alert('Copier manuellement : ' + tn);
+            }
+        }
+    </script>
+
+    {% else %}
+    <p class="text-muted mt-4">Le numéro de suivi sera disponible dès l'expédition.</p>
+    {% endif %}
+</div>
+{% endblock %}

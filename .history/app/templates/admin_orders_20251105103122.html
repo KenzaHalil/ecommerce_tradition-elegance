@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Commandes - Admin{% endblock %}
+{% block content %}
+<h1>Commandes</h1>
+<table class="table">
+  <thead><tr><th>ID</th><th>Client</th><th>Statut</th><th>Total</th><th>Tracking</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for o in orders %}
+      <tr>
+        <td>{{ o.id }}</td>
+        <td>{{ o.user_email }}</td>
+        <td>{{ o.status }}</td>
+        <td>{{ '%.2f'|format((o.total_cents or 0)/100.0) }} €</td>
+        <td>{{ o.tracking or '—' }}</td>
+        <td>
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.admin_order_detail', order_id=o.id) }}">Voir</a>
+          <form method="post" action="{{ url_for('admin.admin_order_ship') }}" style="display:inline" onsubmit="return confirm('Marquer comme expédiée ?');">
+            <input type="hidden" name="order_id" value="{{ o.id }}">
+            <button class="btn btn-sm btn-outline-success" type="submit">Marquer expédiée</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

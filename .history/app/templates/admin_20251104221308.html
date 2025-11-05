@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord admin{% endblock %}
+{% block content %}
+<section class="container">
+  <h1>Admin — Tableau de bord</h1>
+
+  <p><a href="{{ url_for('admin.admin_dev_session') }}">Voir session (dev)</a></p>
+
+  {% if products %}
+    <table class="table">
+      <thead><tr><th>ID</th><th>Nom</th><th>Prix</th><th>Stock</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for p in products %}
+          <tr>
+            <td>{{ p.id if p.id is defined else (p.get('id') if p.get is defined else '-') }}</td>
+            <td>{{ p.name if p.name is defined else (p.get('name') if p.get is defined else '-') }}</td>
+            <td>
+              {% set cents = (p.price_cents if p.price_cents is defined else (p.get('price_cents') if p.get is defined else 0)) %}
+              {{ '%.2f'|format(cents/100.0) }} €
+            </td>
+            <td>{{ p.stock_qty if p.stock_qty is defined else (p.get('stock_qty') if p.get is defined else '-') }}</td>
+            <td>
+              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.edit_product', product_id=(p.id if p.id is defined else p.get('id'))) }}">Modifier</a>
+
+              <form method="post" action="{{ url_for('admin.delete_product') }}" style="display:inline" onsubmit="return confirm('Supprimer ce produit ?');">
+                <input type="hidden" name="product_id" value="{{ p.id if p.id is defined else p.get('id') }}">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Aucun produit trouvé.</p>
+  {% endif %}
+</section>
+{% endblock %}

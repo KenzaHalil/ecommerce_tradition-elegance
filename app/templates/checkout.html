@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Validation de commande - Tradition & Élégance{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1>Résumé de la commande</h1>
+
+  {% if items %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Produit</th>
+        <th>Prix unitaire</th>
+        <th>Quantité</th>
+        <th>Sous‑total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for it in items %}
+      <tr>
+        <td>{{ it.product.name }}</td>
+        <td>{{ (it.product.price_cents / 100) | round(2) }} €</td>
+        <td>{{ it.quantity }}</td>
+        <td>{{ (it.subtotal_cents / 100) | round(2) }} €</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="3" class="text-end">Total</th>
+        <th>{{ total_eur | round(2) }} €</th>
+      </tr>
+    </tfoot>
+  </table>
+
+  <form method="post" class="d-inline">
+    <button type="submit" class="btn btn-primary">Valider la commande et passer au paiement</button>
+  </form>
+  <a href="{{ url_for('cart.view_cart') }}" class="btn btn-secondary ms-2">Retour au panier</a>
+  <a href="{{ url_for('catalogue.catalogue') }}" class="btn btn-link ms-2">Continuer les achats</a>
+
+  {% else %}
+  <p>Votre panier est vide. <a href="{{ url_for('catalogue.catalogue') }}">Voir le catalogue</a></p>
+  {% endif %}
+</div>
+{% endblock %}
+

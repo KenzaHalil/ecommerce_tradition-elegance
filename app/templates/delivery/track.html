@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block title %}Suivi de livraison{% endblock %} {% block content %}
+<div class="container mt-4">
+    <h1>Suivi de livraison</h1>
+
+    <form method="post" class="mb-3" style="max-width:480px;">
+        <div class="mb-2">
+            <label for="tracking_number" class="form-label">Numéro de suivi</label>
+            <input id="tracking_number" name="tracking_number" class="form-control" value="{{ query }}" placeholder="Ex : TRKXXXXXXXXXXXX">
+        </div>
+        <button class="btn btn-primary" type="submit">Rechercher</button>
+    </form>
+
+    {% if error %}
+    <div class="alert alert-warning">{{ error }}</div>
+    {% endif %} {% if delivery %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Transporteur : {{ delivery.carrier or '—' }}</h5>
+            <p><strong>Numéro :</strong> {{ delivery.tracking_number }}</p>
+            <p><strong>Statut :</strong> {{ delivery.status or '—' }}</p>
+            <p><strong>Expédié le :</strong> {{ delivery.shipped_at or '—' }}</p>
+            <p><strong>Livré le :</strong> {{ delivery.delivered_at or '—' }}</p>
+            {% if delivery.tracking_url %}
+            <p><a class="btn btn-outline-secondary" href="{{ delivery.tracking_url }}" target="_blank">Voir le suivi externe</a></p>
+            {% endif %}
+            <p><small class="text-muted">Dernière mise à jour : {{ delivery.updated_at or '—' }}</small></p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

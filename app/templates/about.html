@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}À propos - Tradition & Élégance{% endblock %}
+{% block content %}
+<div class="p-5 mb-4 rounded-4 shadow text-center" style="background:linear-gradient(90deg,#FFF8F0 60%,#FADADD 100%); color:#8B1C2E;">
+    <h1 class="display-5 fw-bold mb-3" style="font-family:'Playfair Display',serif;">À propos de Tradition & Élégance</h1>
+    <p class="lead mb-4" style="font-size:1.2rem;">
+        Tradition & Élégance est une boutique dédiée à la célébration de la féminité et de la richesse culturelle du Maghreb et d’ailleurs.<br>
+        Nous sélectionnons et créons des robes kabyles, caftans, abayas, gandouras et accessoires, alliant savoir-faire artisanal et modernité.
+    </p>
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-4 mb-3">
+            <img src="{{ url_for('static', filename='images/atelier1.jpg') }}" alt="Atelier" class="img-fluid rounded-4 shadow">
+            <p class="mt-2" style="font-size:0.95rem;">Atelier de broderie kabyle</p>
+        </div>
+        <div class="col-md-4 mb-3">
+            <img src="{{ url_for('static', filename='images/creatrice.jpg') }}" alt="Créatrice" class="img-fluid rounded-4 shadow">
+            <p class="mt-2" style="font-size:0.95rem;">Nos créatrices passionnées</p>
+        </div>
+    </div>
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <div class="p-4 rounded-4" style="background:#EED6C4;">
+                <h5 class="fw-bold mb-2" style="font-family:'Playfair Display',serif;">Notre mission</h5>
+                <p>
+                    Valoriser les traditions, la féminité et l’artisanat local.<br>
+                    Offrir des pièces uniques, raffinées et authentiques, pour toutes les femmes qui souhaitent exprimer leur histoire à travers la mode.
+                </p>
+                <ul class="list-unstyled mb-0" style="font-size:1.05rem;">
+                    <li>🌸 Authenticité et qualité</li>
+                    <li>🌸 Créations artisanales et modernes</li>
+                    <li>🌸 Respect des cultures et de l’environnement</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <blockquote class="blockquote mt-4" style="font-size:1.2rem; color:#8B1C2E;">
+        <p>“Chaque robe porte l’histoire d’une culture et la beauté d’une femme.”</p>
+    </blockquote>
+</div>
+{% endblock %}

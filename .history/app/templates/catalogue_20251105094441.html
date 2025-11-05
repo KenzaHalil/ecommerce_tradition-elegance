@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Catalogue{% endblock %}
+
+{% block content %}
+<section class="container">
+  <h1>Catalogue</h1>
+
+  <!-- Barre de recherche -->
+  <form method="get" action="{{ url_for('catalogue.catalogue') }}" class="mb-3" role="search">
+    <input type="search" name="q" value="{{ search_query|default('') }}" placeholder="Rechercher un article..." aria-label="Recherche" class="form-control" />
+    <div class="mt-2">
+      <button type="submit" class="btn btn-primary">Rechercher</button>
+      {% if search_mode %}
+        <a href="{{ url_for('catalogue.catalogue') }}" class="btn btn-secondary">Effacer</a>
+      {% endif %}
+    </div>
+  </form>
+
+  {% if search_mode %}
+    <p>Résultats pour « <strong>{{ search_query }}</strong> » : {{ results_count }} trouvé(s)</p>
+  {% endif %}
+
+  <!-- Affichage par catégories (grouped contient déjà les produits filtrés si recherche active) -->
+  {% for key, meta in categories.items() %}
+    {% set items = grouped.get(key, []) %}
+    <section class="category mb-4">
+      <h2>{{ meta.title }}</h2>
+      <p class="text-muted">{{ meta.desc }}</p>
+      {% if items %}
+        <div class="row">
+          {% for p in items %}
+            <div class="col-md-3">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h5 class="card-title">{{ p.name if p.name is defined else (p.get('name') if p.get is defined else '-') }}</h5>
+                  <p class="card-text">
+                    {% set cents = (p.price_cents if p.price_cents is defined else (p.get('price_cents') if p.get is defined else 0)) %}
+                    {{ '%.2f'|format(cents/100.0) }} €
+                  </p>
+                  <a href="{{ url_for('catalogue.product_detail', product_id=(p.id if p.id is defined else (p.get('id') if p.get is defined else ''))) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>Aucun produit dans cette catégorie.</p>
+      {% endif %}
+    </section>
+  {% endfor %}
+</section>
+{% endblock %}
+
+<script>
+function showAddToCartMessage() {
+    let oldMsg = document.getElementById("add-to-cart-popup");
+    if (oldMsg) oldMsg.remove();
+    let msg = document.createElement('div');
+    msg.id = "add-to-cart-popup";
+    msg.innerHTML = `
+        <div style="
+            position:fixed;
+            top:30px;
+            right:30px;
+            z-index:9999;
+            background:linear-gradient(90deg,#FADADD 70%,#E8C872 100%);
+            color:#8B1C2E;
+            padding:1.2rem 2.2rem;
+            border-radius:28px;
+            box-shadow:0 4px 24px #E8C872;
+            font-weight:bold;
+            font-size:1.15rem;
+            display:flex;
+            align-items:center;
+            gap:0.7rem;
+            border:2px solid #E8C872;
+        ">
+            <span style="font-size:1.5rem;">💖</span>
+            <span>Produit ajouté avec succès !</span>
+        </div>
+    `;
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 2000);
+}
+
+function addToCart(productId) {
+    fetch(`/cart/add/${productId}`, {method: "POST"})
+        .then(response => {
+            if (response.ok) {
+                showAddToCartMessage();
+            } else {
+                window.location.reload();
+            }
+        })
+        .catch(() => window.location.reload());
+}
+</script>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container mt-3">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

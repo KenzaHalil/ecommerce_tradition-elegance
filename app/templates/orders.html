@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Mes commandes{% endblock %}
+{% block content %}
+<section class="container">
+  <h2>Mes commandes</h2>
+  {% set orders_list = orders if orders is defined else current_app.extensions.get('_local_orders', []) %}
+  {% if orders_list %}
+  <table class="table">
+    <thead><tr><th>Commande</th><th>Date</th><th>Montant</th><th>Statut</th><th>Suivi</th><th></th></tr></thead>
+    <tbody>
+      {% for o in orders_list %}
+      <tr>
+        <td>
+          {% if o.order_number is defined %}
+            {{ o.order_number }}
+          {% elif o.get('order_number') %}
+            {{ o.get('order_number') }}
+          {% else %}
+            {{ o.id if o.id is defined else o.get('id') }}
+          {% endif %}
+        </td>
+        <td>{{ (o.created_at if o.created_at is defined else o.get('created_at')) }}</td>
+        <td>
+          {% set cents = (o.total_cents if o.total_cents is defined else o.get('total_cents', 0)) %}
+          {{ '%.2f'|format(cents/100.0) }} €
+        </td>
+        <td>{{ (o.status if o.status is defined else o.get('status', '-')) }}</td>
+        <td>
+          {% set tn = None %}
+          {% if o.delivery is defined and o.delivery %}
+            {% if o.delivery.tracking_number is defined %}{% set tn = o.delivery.tracking_number %}{% elif o.delivery.get('tracking_number') is defined %}{% set tn = o.delivery.get('tracking_number') %}{% endif %}
+          {% elif o.get('delivery') %}
+            {% set d = o.get('delivery') %}
+            {% if d and d.get('tracking_number') %}{% set tn = d.get('tracking_number') %}{% endif %}
+          {% endif %}
+          {% if tn %}<strong>{{ tn }}</strong>{% else %}—{% endif %}
+        </td>
+        <td><a class="btn btn-sm btn-primary" href="{{ url_for('cart.order_confirmation', order_id=(o.id if o.id is defined else o.get('id'))) }}">Détails</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>Aucune commande.</p>
+  {% endif %}
+</section>
+{% endblock %}

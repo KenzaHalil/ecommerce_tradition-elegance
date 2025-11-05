@@ -1,0 +1,48 @@
+{% extends "base.html" %} {% block title %}Mes commandes{% endblock %} {% block content %}
+<div class="container mt-4">
+    <h1>Mes commandes</h1>
+    {% if orders %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Commande</th>
+                <th>Date</th>
+                <th>Montant</th>
+                <th>Statut</th>
+                <th>Suivi</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in orders %}
+            <tr>
+                <td>#{{ o.id }}</td>
+                <td>{{ o.created_at }}</td>
+                <td>{{ '%.2f'|format(o.total_cents/100) }} €</td>
+                <td>{{ o.status }}</td>
+                <td>
+                    {# support many shapes: o.delivery.tracking_number, o.tracking_number, o.shipment.tracking_number, o.shipped_tracking #}
+                    {% if o.delivery and (o.delivery.tracking_number is defined) and o.delivery.tracking_number %}
+                        <strong>{{ o.delivery.tracking_number }}</strong>
+                    {% elif o.tracking_number is defined and o.tracking_number %}
+                        <strong>{{ o.tracking_number }}</strong>
+                    {% elif o.shipment and (o.shipment.tracking_number is defined) and o.shipment.tracking_number %}
+                        <strong>{{ o.shipment.tracking_number }}</strong>
+                    {% elif o.shipped_tracking is defined and o.shipped_tracking %}
+                        <strong>{{ o.shipped_tracking }}</strong>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('order.confirm', order_id=o.id) }}">Détails</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Aucune commande pour l'instant.</p>
+    {% endif %}
+</div>
+{% endblock %}

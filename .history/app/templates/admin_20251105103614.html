@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord admin{% endblock %}
+{% block content %}
+<section class="container">
+  <h1>Admin — Tableau de bord</h1>
+
+  <div class="mb-3">
+    <a class="btn btn-primary" href="{{ url_for('admin.admin_orders') }}">Voir les commandes</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin.admin_dashboard') }}">Produits</a>
+  </div>
+
+  {% if products %}
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>Nom</th><th>Prix</th><th>Stock</th></tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+          <tr>
+            <td>{{ p.id if p.id is defined else (p.get('id') if p.get is defined else '-') }}</td>
+            <td>{{ p.name if p.name is defined else (p.get('name') if p.get is defined else '-') }}</td>
+            <td>
+              {% set cents = (p.price_cents if p.price_cents is defined else (p.get('price_cents') if p.get is defined else 0)) %}
+              {{ '%.2f'|format(cents/100.0) }} €
+            </td>
+            <td>{{ p.stock_qty if p.stock_qty is defined else (p.get('stock_qty') if p.get is defined else '-') }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Aucun produit trouvé.</p>
+  {% endif %}
+</section>
+{% endblock %}

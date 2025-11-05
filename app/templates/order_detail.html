@@ -1,0 +1,12 @@
+<h2>Commande #{{ order.id }}</h2>
+<p>Statut : {{ order.status }}</p>
+<p>Total : {{ '%.2f'|format(order.total_cents/100) }} €</p>
+
+{% if order.delivery %}
+<h4>Suivi</h4>
+<p>Transporteur : {{ order.delivery.carrier or '—' }}</p>
+<p>Numéro de suivi : <strong>{{ order.delivery.tracking_number }}</strong></p>
+<p><a href="{{ url_for('delivery_bp.track') }}?tracking_number={{ order.delivery.tracking_number }}">Voir le suivi</a></p>
+{% else %}
+<p>Numéro de suivi : non disponible pour le moment.</p>
+{% endif %}

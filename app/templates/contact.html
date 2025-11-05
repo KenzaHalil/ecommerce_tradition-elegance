@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% block title %}Contact - Tradition & Élégance{% endblock %}
+{% block content %}
+<style>
+  :root{
+    --brand:#8B1C2E;
+    --accent:#FADADD;
+    --paper:#FFF8F0;
+    --soft:#F6D7D7;
+    --muted:#7a3034;
+  }
+
+  .contact-hero{
+    background: linear-gradient(90deg, rgba(246,215,215,0.55), rgba(255,249,246,1));
+    border-radius:18px;
+    padding:3rem 2rem;
+    margin-bottom:1.6rem;
+    box-shadow: 0 8px 28px rgba(139,28,46,0.06);
+  }
+  .contact-hero h1{
+    font-family:"Playfair Display", serif;
+    color:var(--brand);
+    font-size:3.1rem;
+    margin-bottom:.25rem;
+    letter-spacing:.6px;
+  }
+  .contact-hero p.lead{
+    color:rgba(139,28,46,0.85);
+    font-family:"Poppins",sans-serif;
+    max-width:980px;
+  }
+
+  .contact-grid{
+    display:grid;
+    grid-template-columns: 1fr 380px;
+    gap:1.6rem;
+    align-items:stretch;
+  }
+
+  /* Form panel */
+  .panel-form{
+    background: #fff;
+    border-radius:14px;
+    padding:1.6rem;
+    box-shadow: 0 14px 40px rgba(15,23,42,0.06);
+    border:1px solid rgba(139,28,46,0.03);
+    position:relative;
+    overflow:hidden;
+  }
+  .panel-form::before{
+    content:"";
+    position:absolute;
+    right:-120px; top:-60px;
+    width:260px; height:260px;
+    background: radial-gradient(circle at 30% 30%, rgba(250,218,221,0.9), rgba(246,215,215,0.25));
+    transform: rotate(18deg);
+    border-radius:50%;
+    opacity:.6;
+    pointer-events:none;
+  }
+  .panel-form h4{ font-family:"Playfair Display",serif; color:var(--brand); font-weight:700; }
+
+  .form-floating > label{ color:#666; }
+  .btn-send{
+    background:var(--brand);
+    border-color:var(--brand);
+    font-weight:600;
+    box-shadow: 0 6px 18px rgba(139,28,46,0.08);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn-send:hover{ transform:translateY(-3px); box-shadow: 0 12px 28px rgba(139,28,46,0.12); }
+
+  /* Info panel (right) */
+  .panel-info{
+    border-radius:14px;
+    padding:1.8rem;
+    background: linear-gradient(180deg, var(--soft), rgba(255,250,250,0.98));
+    color:var(--brand);
+    text-align:right;
+    border:1px solid rgba(139,28,46,0.03);
+    box-shadow: 0 10px 30px rgba(15,23,42,0.04);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  .panel-info h3{ font-family:"Playfair Display",serif; font-size:1.6rem; margin-bottom:.2rem; }
+  .panel-info .meta{ color:var(--muted); font-weight:600; margin-bottom:1rem; }
+
+  .info-row{ margin-bottom:.7rem; font-weight:600; }
+  .info-row a{ color:inherit; text-decoration:underline; }
+
+  .socials{ display:flex; gap:.6rem; justify-content:flex-end; margin-top:.6rem; }
+  .socials a{
+    width:48px; height:48px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center;
+    background:rgba(139,28,46,0.06); color:var(--brand);
+    transition: transform .12s ease, background .12s ease;
+  }
+  .socials a:hover{ transform:translateY(-4px); background:rgba(139,28,46,0.12); }
+
+  .sep { height:1px; background:linear-gradient(90deg, transparent, rgba(139,28,46,0.06), transparent); margin:1rem 0; border-radius:2px; }
+
+  /* ajout: styles pour items de contact */
+  .panel-info .contact-item{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:14px;
+    padding:12px;
+    border-radius:10px;
+    background: rgba(255,255,255,0.60);
+    margin-bottom:10px;
+    box-shadow: 0 6px 18px rgba(15,23,42,0.05);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .panel-info .contact-item:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px rgba(15,23,42,0.08);
+  }
+  .panel-info .contact-icon{
+    width:56px; height:56px; flex:0 0 56px;
+    border-radius:12px; display:inline-flex; align-items:center; justify-content:center;
+    background: linear-gradient(180deg, rgba(139,28,46,0.08), rgba(139,28,46,0.03));
+    color:var(--brand); font-size:20px;
+  }
+  .panel-info .contact-text{ text-align:right; }
+  .panel-info .contact-label{ font-weight:700; color:rgba(123,33,38,0.85); }
+  .panel-info .contact-value{ color:var(--brand); font-weight:600; text-decoration:underline; display:block; margin-top:4px; }
+  .panel-info .contact-small{ font-size:.92rem; color:rgba(123,33,38,0.7); margin-top:6px; }
+
+  .panel-info .social-ghost{
+    display:flex; gap:.6rem; justify-content:flex-end; margin-top:12px;
+  }
+  .panel-info .social-ghost a{
+    width:46px; height:46px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center;
+    background: rgba(255,255,255,0.45); color:var(--brand); transition: transform .12s ease, background .12s ease;
+  }
+  .panel-info .social-ghost a:hover{ transform:translateY(-4px); background: rgba(255,255,255,0.65); }
+
+  @media (max-width: 991px){
+    .contact-grid{ grid-template-columns:1fr; }
+    .panel-info{ text-align:left; order:2; }
+  }
+</style>
+
+<div class="container">
+  <section class="contact-hero">
+    <h1>Contactez‑nous</h1>
+    <p class="lead">Pour une commande sur‑mesure, une question produit ou un partenariat — contactez notre équipe. Réponse en général sous 48 heures.</p>
+  </section>
+
+  <div class="contact-grid">
+    <div class="panel-form">
+      <h4>Envoyer un message</h4>
+      <p class="text-muted mb-3">Donnez le maximum de détails (référence, tailles, photos) pour un traitement rapide.</p>
+
+      <form method="post" action="{{ contact_action }}" enctype="multipart/form-data" class="row g-2">
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input id="name" name="name" class="form-control" placeholder="Nom" required>
+            <label for="name">Nom</label>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input id="email" name="email" type="email" class="form-control" placeholder="email@example.com" required>
+            <label for="email">Email</label>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="form-floating">
+            <input id="subject" name="subject" class="form-control" placeholder="Sujet">
+            <label for="subject">Sujet (optionnel)</label>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="form-floating">
+            <textarea id="message" name="message" class="form-control" placeholder="Votre message" style="height:140px" required></textarea>
+            <label for="message">Message</label>
+          </div>
+        </div>
+
+        <div class="col-12 d-flex align-items-center justify-content-between mt-2">
+          <button class="btn btn-send px-4 py-2" type="submit">Envoyer</button>
+          <small class="text-muted">Réponse sous 48h</small>
+        </div>
+      </form>
+    </div>
+
+    <aside class="panel-info">
+      <div>
+        <h3>Tradition & Élégance</h3>
+        <div class="meta">Service client</div>
+
+        <!-- nouveau: items stylés -->
+        <div class="contact-item" aria-label="Email">
+          <div class="contact-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M2 6.5V18a2 2 0 002 2h16a2 2 0 002-2V6.5L12 12 2 6.5zM12 10L2 5.5A2 2 0 014 4h16a2 2 0 012 1.5L12 10z"/></svg>
+          </div>
+          <div class="contact-text">
+            <div class="contact-label">Email</div>
+            <a class="contact-value" href="mailto:halilkenza2005@gmail.com">halilkenza2005@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="contact-item" aria-label="Téléphone">
+          <div class="contact-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.05 15.05 0 006.6 6.6l2.2-2.2a1 1 0 01.9-.25c1 .25 2 .38 3 .38a1 1 0 011 1V20a1 1 0 01-1 1C9.85 21 3 14.15 3 6a1 1 0 011-1h2.5a1 1 0 011 1c0 1 .13 2 .38 3a1 1 0 01-.25.9L6.6 10.8z"/></svg>
+          </div>
+          <div class="contact-text">
+            <div class="contact-label">Téléphone</div>
+            <a class="contact-value" href="tel:+33602566055">+33 6 02 56 60 55</a>
+          </div>
+        </div>
+
+        <div class="contact-item" aria-label="Adresse">
+          <div class="contact-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>
+          </div>
+          <div class="contact-text">
+            <div class="contact-label">Adresse</div>
+            <div class="contact-value">6 allée de l'ourcq, 93190</div>
+          </div>
+        </div>
+
+        <div class="sep" aria-hidden="true"></div>
+
+        <div class="social-ghost" role="navigation" aria-label="Réseaux sociaux">
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm5 6.2A3.8 3.8 0 1015.8 12 3.8 3.8 0 0012 8.2zM18 6.4a.9.9 0 11-.9-.9.9.9 0 01.9.9z"/></svg>
+          </a>
+          <a href="https://www.pinterest.com/" target="_blank" rel="noopener" title="Pinterest" aria-label="Pinterest">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.02 2 15.86 4.03 18.86 6.78 20.22c.09-.78.54-3.09.54-3.09s.09-.36.15-.65c-.15-.36-.25-.78-.25-1.2 0-1.12.65-1.96 1.47-1.96.69 0 1.02.52 1.02 1.15 0 .7-.44 1.74-.67 2.71-.19.81.4 1.47 1.18 1.47 1.42 0 2.5-1.5 2.5-3.66 0-1.91-1.37-3.23-3.34-3.23-2.27 0-3.61 1.7-3.61 3.46 0 .69.27 1.43.6 1.83.07.09.08.17.06.27-.06.3-.2.97-.23 1.11-.04.18-.13.22-.3.13-1.12-.52-1.81-2.15-1.81-3.47 0-2.83 2.06-5.43 6.03-5.43 3.17 0 5.63 2.27 5.63 5.3 0 3.17-2 5.73-4.77 5.73-0.93 0-1.8-.48-2.1-1.04l-.57 2.18c-.2:.78-.74 1.76-1.1 2.36 0 0 1.02.31 1.87.31 5.523 0 10-4.484 10-10.02C22 6.484 17.523 2 12 2z"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/" target="_blank" rel="noopener" title="TikTok" aria-label="TikTok">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h-1.1c0 2.5 2 4.5 4.5 4.5V6.2C19.6 6.2 17.9 5.4 17.5 3zM9 8.9v6.6c0 2.4 1.9 4.3 4.3 4.3 2.4 0 4.3-1.9 4.3-4.3V9.5h-1.6v9.3c0 1.5-1.2 2.7-2.7 2.7-1.5 0-2.7-1.2-2.7-2.7V8.9H9z"/></svg>
+          </a>
+        </div>
+
+        <div style="height:8px"></div>
+        <div style="opacity:.65; font-size:.92rem; margin-top:.6rem">Horaires : Lun‑Ven 9:00–18:00</div>
+      </div>
+    </aside>
+  </div>
+</div>
+{% endblock %}

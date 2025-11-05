@@ -1,0 +1,29 @@
+body {
+    background-color: #ffe6f0; /* rose très clair */
+}
+
+.navbar, .card {
+    background-color: #ffd1ea !important; /* rose clair */
+}
+
+.btn-primary, .btn-success, .btn-danger {
+    background-color: #ff69b4 !important; /* rose vif */
+    border-color: #ff69b4 !important;
+}
+
+.table th, .table td {
+    background-color: #fff0f6;
+}
+
+h1, h2, h5, .card-title {
+    color: #d72660;
+}
+
+a, .nav-link {
+    color: #d72660 !important;
+}
+
+.btn-primary:hover, .btn-success:hover, .btn-danger:hover {
+    background-color: #d72660 !important;
+    border-color: #d72660 !important;
+}

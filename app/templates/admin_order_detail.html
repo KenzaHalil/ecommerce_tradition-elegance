@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Commande {{ order[0] }}{% endblock %}
+{% block content %}
+<h1>Commande {{ order[0] }}</h1>
+<p>Client id: {{ order[1] }} — Statut: {{ order[2] }} — Total: {{ '%.2f'|format((order[3] or 0)/100.0) }} €</p>
+
+<h3>Lignes</h3>
+<table class="table">
+  <thead><tr><th>Produit</th><th>Quantité</th><th>Prix</th></tr></thead>
+  <tbody>
+    {% for pid, qty, price in items %}
+      <tr><td>{{ pid }}</td><td>{{ qty }}</td><td>{{ '%.2f'|format(price/100.0) }} €</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h3>Delivery</h3>
+{% if delivery %}
+  <p>Carrier: {{ delivery[1] }} — Tracking: {{ delivery[2] }} — Status: {{ delivery[3] }}</p>
+{% else %}
+  <p>Aucune livraison enregistrée.</p>
+{% endif %}
+
+<h3>Paiement</h3>
+{% if payment %}
+  <p>Provider: {{ payment[1] }} — Réf: {{ payment[2] }} — Succeded: {{ payment[3] }}</p>
+{% else %}
+  <p>Aucun paiement trouvé.</p>
+{% endif %}
+
+<p><a href="{{ url_for('admin.admin_orders') }}" class="btn btn-secondary">Retour</a></p>
+{% endblock %}
