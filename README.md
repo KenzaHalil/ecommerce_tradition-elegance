@@ -45,7 +45,7 @@ projet_ecommerce
 
 3. Run the application:
    ```
-   python src/main.py
+   python run.py
    ```
 
 
