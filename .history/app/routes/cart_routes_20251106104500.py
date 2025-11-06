@@ -336,7 +336,6 @@ def api_update_item(product_id):
     else:
         cart[key] = int(qty)
     session["cart"] = cart
-    session.modified = True   # <-- ensure Flask saves the session cookie
 
     def _price_cents(pid):
         try:

@@ -103,61 +103,37 @@ def add_to_cart(product_id):
 
 @cart_bp.route("/cart")
 def view_cart():
-    # obtenir items + total depuis service (ou fallback session)
+    # Require login to view the cart
+    if session.get("user_id") is None:
+        flash("Connectez‑vous pour voir votre panier.", "warning")
+        return redirect(url_for("auth.login", next=request.url))
+    """
+    Show the cart page.
+    - Prefer cart service view() if available.
+    - If the service returns empty but the session has items, prefer the session (fallback).
+    - Render cart.html with items and cart_total (in euros).
+    """
     services = current_app.extensions.get("services", {})
     cart_svc = services.get("cart")
 
-    items, total_cents = [], 0
+    # Prefer service view when available
     if cart_svc and hasattr(cart_svc, "view"):
         try:
             items, total_cents = cart_svc.view()
+            # If service returned nothing but session has items, use session data (safer for the user)
+            session_cart = session.get("cart", {})
+            if (not items) and session_cart:
+                current_app.logger.debug("cart view empty from service but session has items -> using session fallback")
+                items, total_cents = _session_view()
         except Exception:
-            current_app.logger.exception("cart.view failed; falling back to session")
-            items, total_cents = [], 0
-
-    # fallback session -> build items if service empty
-    if (not items) and session.get("cart"):
-        from app.routes.checkout_routes import _build_items_from_session
-        items, total_cents = _build_items_from_session()
+            # On any exception, fallback to session cart
+            current_app.logger.exception("cart.view failed, using session fallback")
+            items, total_cents = _session_view()
     else:
-        # normaliser les items (toujours fournir subtotal_cents, product dict, product_id, price_cents, quantity)
-        normalized = []
-        total = 0
-        for it in items or []:
-            if isinstance(it, dict):
-                qty = int(it.get("quantity", 1) or 1)
-                # prix depuis clef price_cents ou product.price_cents ou 0
-                price = int(it.get("price_cents") or (it.get("product") and it["product"].get("price_cents")) or 0)
-                subtotal = int(it.get("subtotal_cents", price * qty))
-                prod = it.get("product")
-                if isinstance(prod, dict):
-                    prod_dict = {"id": str(prod.get("id", it.get("product_id", ""))),
-                                 "name": prod.get("name", str(prod.get("id", it.get("product_id", "")))),
-                                 "price_cents": int(prod.get("price_cents", price))}
-                else:
-                    prod_dict = {"id": str(it.get("product_id", "")), "name": str(prod) if prod else str(it.get("product_id", "")), "price_cents": price}
-            else:
-                # object-like
-                qty = int(getattr(it, "quantity", 1) or 1)
-                price = int(getattr(it, "price_cents", getattr(getattr(it, "product", None), "price_cents", 0) or 0))
-                subtotal = int(getattr(it, "subtotal_cents", price * qty))
-                prod = getattr(it, "product", None)
-                prod_dict = {"id": str(getattr(prod, "id", getattr(it, "product_id", ""))),
-                             "name": getattr(prod, "name", str(getattr(it, "product_id", ""))),
-                             "price_cents": price}
+        # No service: use session cart
+        items, total_cents = _session_view()
 
-            normalized.append({
-                "product_id": str(prod_dict.get("id")),
-                "product": prod_dict,
-                "quantity": int(qty),
-                "price_cents": int(price),
-                "subtotal_cents": int(subtotal)
-            })
-            total += subtotal
-
-        items = normalized
-        total_cents = total
-
+    # cart_total passed to template in euros (cents/100)
     return render_template("cart.html", items=items, cart_total=(total_cents or 0)/100)
 
 @cart_bp.route("/cart/remove/<product_id>", methods=["POST"])
@@ -336,7 +312,6 @@ def api_update_item(product_id):
     else:
         cart[key] = int(qty)
     session["cart"] = cart
-    session.modified = True   # <-- ensure Flask saves the session cookie
 
     def _price_cents(pid):
         try:
