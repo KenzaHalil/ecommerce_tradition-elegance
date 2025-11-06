@@ -1,6 +1,5 @@
 from flask import Blueprint, current_app, redirect, url_for, render_template, request, flash, session
 from app.models import Product
-from app.auth_helpers import login_required
 
 cart_bp = Blueprint("cart", __name__)
 
@@ -47,12 +46,7 @@ def _session_view():
     return items, total
 
 @cart_bp.route("/cart/add/<product_id>", methods=["POST"])
-@login_required()
 def add_to_cart(product_id):
-    # Ensure user is authenticated (explicit check, compatible si le décorateur n'est pas actif)
-    if session.get("user_id") is None:
-        flash("Connectez‑vous pour ajouter des produits au panier.", "warning")
-        return redirect(url_for("auth.login", next=request.referrer or request.url))
     """
     Add product to cart.
     - Prefer using a cart service if available (app.extensions['services']['cart'])
@@ -103,10 +97,6 @@ def add_to_cart(product_id):
 
 @cart_bp.route("/cart")
 def view_cart():
-    # Require login to view the cart
-    if session.get("user_id") is None:
-        flash("Connectez‑vous pour voir votre panier.", "warning")
-        return redirect(url_for("auth.login", next=request.url))
     """
     Show the cart page.
     - Prefer cart service view() if available.

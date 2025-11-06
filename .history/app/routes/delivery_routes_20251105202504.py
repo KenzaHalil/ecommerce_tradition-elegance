@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, url_for, render_template, flash, session
+from flask import Blueprint, render_template, request, session, flash, redirect
 from app.models import Delivery
 
 bp = Blueprint('delivery_bp', __name__, url_prefix='/delivery')

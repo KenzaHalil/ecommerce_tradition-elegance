@@ -130,7 +130,7 @@ def pay():
     pending = session.get("pending_payment")
     if not pending:
         flash("Aucune commande en attente de paiement.", "warning")
-        return redirect(url_for("cart.view_cart"))
+        return redirect(url_for "cart.view_cart")
 
     if request.method == "GET":
         amount_eur = (pending.get("amount_cents", 0) or 0) / 100

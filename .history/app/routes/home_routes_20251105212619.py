@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, current_app, url_for, request, flash, redirect
+from flask import Blueprint, render_template, current_app, url_for
 from werkzeug.routing import BuildError
 
 home_bp = Blueprint("home", __name__)
@@ -13,12 +13,12 @@ def about():
 
 @home_bp.route("/contact", methods=["GET", "POST"])
 def contact():
-    # Handle contact form locally so it always shows the correct message.
+    # If POST: handle the contact form locally and show the correct message
     if request.method == "POST":
-        # optionally read form fields: name = request.form.get("name")
+        # you can read form fields if needed: name = request.form.get("name")
         flash("Merci pour votre message !", "success")
         return redirect(url_for("home.contact"))
 
-    # For GET: render the contact form pointing to this same route.
+    # For GET: the form action will point to this same route (avoid newsletter takeover)
     action = url_for("home.contact")
     return render_template("contact.html", contact_action=action)
