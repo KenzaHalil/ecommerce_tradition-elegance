@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
-from app.auth_validators import validate_password_strength, validate_email_address
+from flask import Blueprint, request, flash, redirect, url_for, render_template
+from app.auth_validators import validate_password_strength
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -8,18 +8,12 @@ def register():
     services = current_app.extensions["services"]
     auth = services["auth"]
     if request.method == "POST":
-        email = request.form.get("email", "").strip()
-        ok, err = validate_email_address(email)
-        if not ok:
-            flash(err, "warning")
-            return redirect(url_for("auth.register"))
-
+        email = (request.form.get("email") or "").strip()
         password = request.form.get("password", "")
         ok, err = validate_password_strength(password)
         if not ok:
             flash(err, "warning")
             return redirect(url_for("auth.register"))
-
         first_name = (request.form.get("first_name") or "").strip()
         last_name = (request.form.get("last_name") or "").strip()
         if not email or not password:
